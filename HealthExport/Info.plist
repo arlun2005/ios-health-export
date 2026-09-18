@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Health Export reads your step count, heart rate, active energy, sleep analysis, and workouts from Apple Health so you can preview those samples and export a copy as CSV or JSON. The files stay on this iPhone until you choose to save or share them. The app does not upload your health data.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Health Export does not write, update, or delete any information in Apple Health. This description is required by HealthKit when initializing the HealthKit store, even though this app is read-only.</string>
+</dict>
+</plist>
