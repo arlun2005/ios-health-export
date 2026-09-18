@@ -6,65 +6,33 @@ The app is **read-only**. It does not write to HealthKit, does not use Clinical 
 
 This is an **iPhone-only** app (`TARGETED_DEVICE_FAMILY = 1`, Mac Catalyst off). A MacBook is the machine you use to build and install. Real Apple Health data is only available on a **physical iPhone (iOS 17+)**.
 
+## 你只需要做（一定要你個 Apple ID / iPhone）
+
+Repo 入面嘅 app、HealthKit entitlement、usage description、automatic signing、scheme 已經搞好。呢邊係 Linux 雲端機，**入唔到你部 Mac，亦登唔入你個 Apple Account**，所以淨係下面幾樣要你做：
+
+1. **Mac App Store** 用你個 Apple ID 裝 **Xcode 16**（或 15.4+），開一次等 extra components 裝完。
+2. **Xcode → Settings → Accounts → +** 登入同一個 Apple ID（免費 Personal Team 得）。
+3. 雙擊 `HealthExport.xcodeproj`（或 `Open Health Export.command`）→ target **HealthExport** → **Signing & Capabilities** → **Team** 揀你個帳號。唔好開 Clinical Health Records。Bundle ID 如果報被佔用，先改。
+4. USB 插 **實體 iPhone**（唔好揀 Simulator）→ 開 **設定 → 私隱與安全性 → 開發者模式** → Xcode 撳 Run。iPhone 叫 Trust / Untrusted Developer 就 Trust。
+5. App 入面 **Continue with Apple Health**，打開 Steps、Heart Rate、Active Energy、Sleep、Workouts，然後 Load preview → Share CSV / JSON。
+
+之後改 Health 權限：**健康 → 頭像 → 私隱 → App → Health Export**。
+
+## 已經幫你做好
+
+- SwiftUI app 同 HealthKit 讀取 / CSV+JSON export
+- [`HealthExport/HealthExport.entitlements`](HealthExport/HealthExport.entitlements)：HealthKit on、clinical records off
+- Info.plist usage strings、automatic signing（`CODE_SIGN_STYLE = Automatic`，identity `Apple Development`）
+- Shared **HealthExport** scheme
+
 ```mermaid
 flowchart LR
-  clone[Clone repo on Mac]
-  xcode[Open HealthExport.xcodeproj]
-  sign[Signing Team]
-  phone[Select physical iPhone]
-  run[Xcode Run]
+  you[You: Apple ID and iPhone]
+  xcode[Xcode Team plus Run]
   health[Allow Health types]
-  export[Preview and Share CSV/JSON]
-  clone --> xcode --> sign --> phone --> run --> health --> export
+  export[Share CSV JSON]
+  you --> xcode --> health --> export
 ```
-
-## 喺 MacBook 裝去 iPhone 跑
-
-跟呢幾步就可以喺 Mac 用 Xcode 裝去你部 iPhone，然後 export Health 數據。
-
-### 1. Mac 準備
-
-- 喺 App Store 裝 **Xcode 15.4+**（建議 16），開一次等 extra components 裝完
-- 用 Apple ID 登入 Xcode：**Xcode → Settings → Accounts → +**
-- 免費 Personal Team 都可以裝去自己部機；HealthKit capability 一般都可以自動簽
-
-### 2. 開專案
-
-```bash
-git clone https://github.com/arlun2005/ios-health-export.git
-cd ios-health-export
-git checkout cursor/healthkit-export-app-7881   # PR 未 merge 就用呢條 branch；merge 咗用 main
-open HealthExport.xcodeproj
-```
-
-或者 Finder 雙擊 `HealthExport.xcodeproj`。上面 scheme 揀 **HealthExport**。
-
-### 3. Signing（第一次必做）
-
-1. 左邊 navigator 撳 **HealthExport** project → target **HealthExport**
-2. 開 **Signing & Capabilities**
-3. **Team** 揀你個 Apple ID
-4. Bundle ID 而家係 `com.arlun2005.HealthExport`；如果 Xcode 話被佔用，改成你自己嘅，例如 `com.yourname.HealthExport`
-5. 確認 **HealthKit** capability 喺度；**唔好**開 Clinical Health Records
-
-Automatic signing 已開（`CODE_SIGN_STYLE = Automatic`）。Entitlements 喺 [`HealthExport/HealthExport.entitlements`](HealthExport/HealthExport.entitlements)：`com.apple.developer.healthkit` 為 true，`com.apple.developer.healthkit.access` 係空 array。
-
-### 4. iPhone 準備同 Run
-
-1. 解鎖 iPhone，用 USB 插 Mac（之後可以開 Wireless Debugging）
-2. iPhone 彈 Trust 就 Trust
-3. iOS 16+：**設定 → 私隱與安全性 → 開發者模式** 打開，然後重啟
-4. Xcode 頂部 destination **揀你部 iPhone**（唔好揀 Simulator / My Mac）
-5. 撳 Run（⌘R）
-6. 如果 iPhone 話 Untrusted Developer：**設定 → 一般 → VPN 與裝置管理** → Trust 你個 developer cert
-
-### 5. 第一次用 app
-
-1. 撳 **Continue with Apple Health**
-2. 打開 Steps、Heart Rate、Active Energy、Sleep、Workouts
-3. 揀日期同類型 → **Load preview** → Share CSV / JSON
-
-之後改權限：**健康 → 頭像 → 私隱 → App → Health Export**。
 
 ### 唔好揀嘅 destination
 
@@ -93,7 +61,7 @@ HealthKit is not available in the iOS Simulator. `HKHealthStore.isHealthDataAvai
 ## Open in Xcode
 
 1. Clone this repository (see the commands above).
-2. Open `HealthExport.xcodeproj` (double-click it or `open HealthExport.xcodeproj`).
+2. Open `HealthExport.xcodeproj` (double-click it, run `Open Health Export.command`, or `open HealthExport.xcodeproj`).
 3. Select the **HealthExport** scheme and an attached **physical iPhone**.
 
 ## Signing
@@ -159,6 +127,7 @@ Use whatever iPhone simulator name your Xcode provides. Unit tests cover CSV esc
 
 ```
 HealthExport.xcodeproj      Xcode project (shared scheme included)
+Open Health Export.command  Double-click on a Mac to open the project
 HealthExport/
   App/                      SwiftUI entry + session
   Models/                   Types, date range, export records
