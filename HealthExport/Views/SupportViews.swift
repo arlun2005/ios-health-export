@@ -29,7 +29,7 @@ struct UnavailableHealthView: View {
         ContentUnavailableView {
             Label("Apple Health unavailable", systemImage: "iphone.slash")
         } description: {
-            Text("HealthKit is not available here. The iOS Simulator cannot export real Apple Health data. Open this project on a Mac, sign in with your Apple Developer team, and run Health Export on a physical iPhone.")
+            Text("HealthKit is not available here. The iOS Simulator and Mac cannot export real Apple Health data. On a MacBook, open HealthExport.xcodeproj in Xcode, choose your signing team, enable Developer Mode on the iPhone, pick that iPhone as the run destination (not Simulator), and press Run.")
         }
         .padding()
     }
